@@ -46,7 +46,7 @@ def removePunc(word):
 	return wordString
 
 
-fo = open("articleWords.txt", "a")
+fo = open("articleWords.csv", "a")
 
 
 # Gets the first page and extracts the total numer of pages into num_of_pages
@@ -109,7 +109,7 @@ for kword in keywords:
 					dTime = dateTimeFormat(timeString)	
 					datetime_object = datetime.strptime(dTime, '%m/%d/%Y').date()
 					source = 'NYT'
-					fo.write("%s\n" % (wordString.lower()))
-					fo.write("%s\t %s \t %d \t %s \n" % (datetime_object, source, j, tJoin))
+					fo.write("%s, " % (wordString.lower()))
+					fo.write("%s, %s, %d, %s \n" % (datetime_object, source, j, tJoin))
 				
 fo.close()
