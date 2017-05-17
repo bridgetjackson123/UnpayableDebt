@@ -46,91 +46,70 @@ def removePunc(word):
 	return wordString
 
 
-fo = open("dbInfo.txt", "a")
+fo = open("articleWords.txt", "a")
 
 
 # Gets the first page and extracts the total numer of pages into num_of_pages
 #word after q must be changed per query search
-searchword = 'shortage'
-first_page = "https://www.nytimes.com/svc/collections/v1/publish/topics.nytimes.com/topic/destination/puerto-rico?q="+searchword +"&sort=relevance&page=1&dom=www.nytimes.com"
-r = urllib.urlopen(first_page).read()
-js = json.loads(r)
-num_of_pages = int(js['members']['total_pages'])
-count = 0
+keywords = []
+keywords.append('debt')
+keywords.append('crisis')
+keywords.append('hedge-funds')
+keywords.append('shortage')
+keywords.append('financial-crisis')
+keywords.append('restructuring')
+keywords.append('responsibility')
+keywords.append('')
+for kword in keywords:
 
-# For each page we get all articles and extract url and extract each word from each article and print as unicode object
-for i in range (1,num_of_pages):	
-	url = "https://www.nytimes.com/svc/collections/v1/publish/topics.nytimes.com/topic/destination/puerto-rico?q="+searchword +"&sort=relevance&page="+str(i)+"&dom=www.nytimes.com"
-	
-	r = urllib.urlopen(url).read()
+	searchword = kword
+	first_page = "https://www.nytimes.com/svc/collections/v1/publish/topics.nytimes.com/topic/destination/puerto-rico?q="+searchword +"&sort=relevance&page=1&dom=www.nytimes.com"
+	r = urllib.urlopen(first_page).read()
 	js = json.loads(r)
-	num_of_items = len(js['members']['items'])
-	for item in range(1,num_of_items):
-		r = requests.get(js['members']['items'][item]['url'])
-			
-		soup = BeautifulSoup(r.content, "html.parser")
+	num_of_pages = int(js['members']['total_pages'])
+	count = 0
 
-
-		data = soup.find_all("p", {"class": "story-body-text story-content"})
+	# For each page we get all articles and extract url and extract each word from each article and print as unicode object
+	for i in range (1,num_of_pages):	
+		url = "https://www.nytimes.com/svc/collections/v1/publish/topics.nytimes.com/topic/destination/puerto-rico?q="+searchword +"&sort=relevance&page="+str(i)+"&dom=www.nytimes.com"
 		
-		time = soup.find_all("time", {"class": "dateline"})
-
-		title = soup.find('title')
-		tText = title.encode('utf-8')
-		#removes first title tag
-		tText = tText[7:]
-		tSplit = tText.rsplit('-', )[:-1]
-		tJoin = ''.join(tSplit)
-
-
-		#translator = str.maketrans('','', string.punctuation)
-		for word in data:
-			#print word.text -- this prints just the html text 
-			info = word.text
-			info.lower()
-			#words = [x.strip(string.punctuation) for x in info.split()]
-			words = info.split()
-			for j in range(0, len(words)):
-				#prints individual word, lower case, stripped of punctuation as string
-				wordString = words[j].encode('utf-8')
-
-				wordString = removePunc(str(wordString.lower()))
-				#print wordString
-
-				#print wordString[0]
+		r = urllib.urlopen(url).read()
+		js = json.loads(r)
+		num_of_items = len(js['members']['items'])
+		for item in range(1,num_of_items):
+			r = requests.get(js['members']['items'][item]['url'])
 				
-				"""if(wordString[0].isalpha() != True):
-					print wordString
-					wordString = wordString[3:]
-					print wordString
-				
-				#lenWord = len(wordString)
-				if(wordString[:-1].isalpha() != True and wordString):
-					print wordString
-					wordString = wordString[:-3]
-					print wordString
-				"""
-				#prints time stamp as string
-				timeString = time[0].text
-				timeString = [x.strip(string.punctuation) for x in timeString.split()]
-				
-				dTime = dateTimeFormat(timeString)	
-				datetime_object = datetime.strptime(dTime, '%m/%d/%Y').date()
-				source = 'NYT'
-				#print datetime_object
-				#insertString = wordString + timeString 
-				#print wordStrip
-				fo.write("%s\t" % (wordString.lower()))
-				fo.write("%s\t %s \t %d \t %s \n" % (datetime_object, source, j, tJoin))
+			soup = BeautifulSoup(r.content, "html.parser")
+
+			data = soup.find_all("p", {"class": "story-body-text story-content"})
+			
+			time = soup.find_all("time", {"class": "dateline"})
+
+			title = soup.find('title')
+			tText = title.encode('utf-8')
+			#removes first title tag
+			tText = tText[7:]
+			tSplit = tText.rsplit('-', )[:-1]
+			tJoin = ''.join(tSplit)
+			for word in data:
+				#print word.text -- this prints just the html text 
+				info = word.text
+				info.lower()
+				#words = [x.strip(string.punctuation) for x in info.split()]
+				words = info.split()
+				for j in range(0, len(words)):
+					#prints individual word, lower case, stripped of punctuation as string
+					wordString = words[j].encode('utf-8')
+
+					wordString = removePunc(str(wordString.lower()))
+					#prints time stamp as string
+					timeString = time[0].text
+					timeString = [x.strip(string.punctuation) for x in timeString.split()]
+					
+					dTime = dateTimeFormat(timeString)	
+					datetime_object = datetime.strptime(dTime, '%m/%d/%Y').date()
+					source = 'NYT'
+					fo.write("%s\n" % (wordString.lower()))
+					fo.write("%s\t %s \t %d \t %s \n" % (datetime_object, source, j, tJoin))
 				
 fo.close()
-
-
-
-
-
-
-
-
-
-

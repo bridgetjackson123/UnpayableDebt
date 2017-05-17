@@ -59,7 +59,7 @@ def removePunc(word):
 	return wordString
 
 
-fo = open("titleWords.txt", "a")
+fo = open("titlesOnly.txt", "a")
 
 
 # Gets the first page and extracts the total numer of pages into num_of_pages
