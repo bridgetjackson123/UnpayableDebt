@@ -59,8 +59,7 @@ def removePunc(word):
 	return wordString
 
 
-fo = open("titlesOnly.txt", "a")
-
+fo = open("titles.csv", "a")
 
 # Gets the first page and extracts the total numer of pages into num_of_pages
 #word after q must be changed per query search
@@ -114,10 +113,8 @@ for kword in keywords:
 				dTime = dateTimeFormat(timeString)	
 				datetime_object = datetime.strptime(dTime, '%m/%d/%Y').date()
 				source = 'NYT'
-				#timeObject = datetime_object
 				print dTime
-				#fo.write("%s \t " % (datetime_object))
-				#fo.write("%s \n" % (returnMeJoin))
+				fo.write("%s, " % (datetime_object))
 				fo.write("%s \n" % (returnMeJoin))
 					
 fo.close()
